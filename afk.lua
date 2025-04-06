@@ -46,11 +46,14 @@ local function sendToDiscord(rewardData)
     -- Ensure we can make HTTP requests
     if WEBHOOK_URL ~= "" then
         local success, err = pcall(function()
-            game:GetService("HttpService"):PostAsync(WEBHOOK_URL, game:GetService("HttpService"):JSONEncode(payload))
+            local response = game:GetService("HttpService"):PostAsync(WEBHOOK_URL, game:GetService("HttpService"):JSONEncode(payload), Enum.HttpContentType.ApplicationJson)
+            print("Response: " .. response) -- Log the response for debugging
         end)
 
         if not success then
             warn("Failed to send to Discord: " .. err)
+        else
+            print("Successfully sent to Discord!")
         end
     else
         warn("Webhook URL is empty.")
