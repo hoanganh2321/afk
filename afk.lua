@@ -1,6 +1,6 @@
 -- AFK Rewards Configuration
-local WEBHOOK_URL = "https://discord.com/api/webhooks/1330089734835277897/hdRecdjggab0Tr-wWdziRj32d78co06Y9oRnIPRM9XB-d0Tt5tV3lfACAuShtyRsXvqp"  -- Webhook URL sẽ được nhập từ UI
-local CHECK_INTERVAL = 240 -- Check every 60 seconds
+local WEBHOOK_URL = ""  -- Webhook URL sẽ được nhập từ UI
+local CHECK_INTERVAL = 60 -- Check every 60 seconds
 local lastRewardCount = 0 -- Track last known reward count
 
 -- Function to send notification to Discord
@@ -104,15 +104,16 @@ Tabs.Settings:AddInput("DiscordWebhook", {
     end
 })
 
--- Show UI to allow users to input webhook URL
-Tabs.Main:AddButton("Show Webhook UI", function()
+-- Add a button to show the Webhook UI for entering URL
+Tabs.Main:AddButton("Enter Webhook URL", function()
+    -- Create the UI for the webhook input
     local inputGui = Instance.new("ScreenGui")
     inputGui.Name = "WebhookInputGui"
     inputGui.Parent = game.Players.LocalPlayer.PlayerGui
     
     local frame = Instance.new("Frame")
-    frame.Size = UDim2.new(0.5, 0, 0.2, 0)
-    frame.Position = UDim2.new(0.25, 0, 0.4, 0)
+    frame.Size = UDim2.new(0.5, 0, 0.3, 0)
+    frame.Position = UDim2.new(0.25, 0, 0.35, 0)
     frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     frame.Parent = inputGui
 
@@ -139,8 +140,13 @@ Tabs.Main:AddButton("Show Webhook UI", function()
     submitButton.Parent = frame
 
     submitButton.MouseButton1Click:Connect(function()
-        WEBHOOK_URL = textBox.Text
-        print("Webhook URL đã được cập nhật: " .. WEBHOOK_URL)
-        inputGui:Destroy()  -- Remove the input UI after submission
+        local url = textBox.Text
+        if url ~= "" then
+            WEBHOOK_URL = url
+            print("Webhook URL đã được cập nhật: " .. WEBHOOK_URL)
+            inputGui:Destroy()  -- Remove the input UI after submission
+        else
+            warn("Vui lòng nhập URL hợp lệ!")
+        end
     end)
 end)
