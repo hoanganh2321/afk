@@ -1,5 +1,5 @@
 -- AFK Rewards Configuration
-local WEBHOOK_URL = ""  -- Webhook URL sẽ được nhập từ UI
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1330089734835277897/hdRecdjggab0Tr-wWdziRj32d78co06Y9oRnIPRM9XB-d0Tt5tV3lfACAuShtyRsXvqp"  -- Webhook URL sẽ được nhập từ UI
 local CHECK_INTERVAL = 240 -- Check every 60 seconds
 local lastRewardCount = 0 -- Track last known reward count
 
