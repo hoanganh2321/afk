@@ -43,12 +43,17 @@ local function sendToDiscord(rewardData)
         content = "Hôm nay lúc " .. os.date("%H:%M")
     }
 
-    local success, err = pcall(function()
-        game:GetService("HttpService"):PostAsync(WEBHOOK_URL, game:GetService("HttpService"):JSONEncode(payload))
-    end)
+    -- Ensure we can make HTTP requests
+    if WEBHOOK_URL ~= "" then
+        local success, err = pcall(function()
+            game:GetService("HttpService"):PostAsync(WEBHOOK_URL, game:GetService("HttpService"):JSONEncode(payload))
+        end)
 
-    if not success then
-        warn("Failed to send to Discord: " .. err)
+        if not success then
+            warn("Failed to send to Discord: " .. err)
+        end
+    else
+        warn("Webhook URL is empty.")
     end
 end
 
@@ -76,41 +81,13 @@ local function checkAFKRewards()
     end
 end
 
--- Add AFK Rewards toggle to your UI
-Tabs.Main:AddToggle("AutoAFKRewards", {
-    Title = "Auto Claim AFK Rewards",
-    Default = false,
-    Callback = function(state)
-        if state then
-            -- Initial check
-            checkAFKRewards()
-            
-            -- Set up recurring check
-            while task.wait(CHECK_INTERVAL) and state do
-                checkAFKRewards()
-            end
-        end
-    end
-})
-
--- Add webhook configuration input
-Tabs.Settings:AddInput("DiscordWebhook", {
-    Title = "Discord Webhook URL",
-    Default = "",
-    Placeholder = "https://discord.com/api/webhooks/...",
-    Callback = function(text)
-        WEBHOOK_URL = text
-        print("Webhook URL đã được cập nhật: " .. WEBHOOK_URL)
-    end
-})
-
--- Add a button to show the Webhook UI for entering URL
-Tabs.Main:AddButton("Enter Webhook URL", function()
-    -- Create the UI for the webhook input
+-- Show UI to allow users to input webhook URL
+local function createWebhookUI()
+    -- Create a ScreenGui for the input form
     local inputGui = Instance.new("ScreenGui")
     inputGui.Name = "WebhookInputGui"
     inputGui.Parent = game.Players.LocalPlayer.PlayerGui
-    
+
     local frame = Instance.new("Frame")
     frame.Size = UDim2.new(0.5, 0, 0.3, 0)
     frame.Position = UDim2.new(0.25, 0, 0.35, 0)
@@ -149,4 +126,24 @@ Tabs.Main:AddButton("Enter Webhook URL", function()
             warn("Vui lòng nhập URL hợp lệ!")
         end
     end)
-end)
+end
+
+-- Create UI for webhook input when the game starts or when triggered
+createWebhookUI()
+
+-- Add AFK Rewards toggle to your UI (Example)
+Tabs.Main:AddToggle("AutoAFKRewards", {
+    Title = "Auto Claim AFK Rewards",
+    Default = false,
+    Callback = function(state)
+        if state then
+            -- Initial check
+            checkAFKRewards()
+            
+            -- Set up recurring check
+            while task.wait(CHECK_INTERVAL) and state do
+                checkAFKRewards()
+            end
+        end
+    end
+})
